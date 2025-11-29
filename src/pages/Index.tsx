@@ -7,22 +7,119 @@ import RecentScans from "@/components/RecentScans";
 import Stats from "@/components/Stats";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { File, Link, Shield } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { scanFile, scanUrl, pollAnalysisResults, type ScanResult } from "@/lib/virusTotal";
 
 const Index = () => {
   const [scanTarget, setScanTarget] = useState<string | null>(null);
   const [scanType, setScanType] = useState<"file" | "url">("file");
   const [isScanning, setIsScanning] = useState(false);
+  const [scanResult, setScanResult] = useState<ScanResult | null>(null);
+  const [scanError, setScanError] = useState<string | null>(null);
+  const { toast } = useToast();
 
-  const handleFileScan = (file: File) => {
+  const handleFileScan = async (file: File) => {
     setScanTarget(file.name);
     setScanType("file");
     setIsScanning(true);
+    setScanResult(null);
+    setScanError(null);
+
+    toast({
+      title: "Uploading file",
+      description: `Scanning ${file.name} with VirusTotal...`,
+    });
+
+    const { analysisId, error } = await scanFile(file);
+
+    if (error) {
+      setScanError(error);
+      setIsScanning(false);
+      toast({
+        title: "Scan failed",
+        description: error,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (analysisId) {
+      toast({
+        title: "File uploaded",
+        description: "Analysis in progress...",
+      });
+
+      const result = await pollAnalysisResults(analysisId, (update) => {
+        setScanResult(update);
+      });
+
+      setIsScanning(false);
+      
+      if (result.stats.malicious > 0) {
+        toast({
+          title: "Threats detected!",
+          description: `${result.stats.malicious} security vendors flagged this file as malicious.`,
+          variant: "destructive",
+        });
+      } else if (result.status === "completed") {
+        toast({
+          title: "Scan complete",
+          description: "No threats detected.",
+        });
+      }
+    }
   };
 
-  const handleURLScan = (url: string) => {
+  const handleURLScan = async (url: string) => {
     setScanTarget(url);
     setScanType("url");
     setIsScanning(true);
+    setScanResult(null);
+    setScanError(null);
+
+    toast({
+      title: "Scanning URL",
+      description: `Analyzing ${url} with VirusTotal...`,
+    });
+
+    const { analysisId, error } = await scanUrl(url);
+
+    if (error) {
+      setScanError(error);
+      setIsScanning(false);
+      toast({
+        title: "Scan failed",
+        description: error,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (analysisId) {
+      toast({
+        title: "URL submitted",
+        description: "Analysis in progress...",
+      });
+
+      const result = await pollAnalysisResults(analysisId, (update) => {
+        setScanResult(update);
+      });
+
+      setIsScanning(false);
+
+      if (result.stats.malicious > 0) {
+        toast({
+          title: "Threats detected!",
+          description: `${result.stats.malicious} security vendors flagged this URL as malicious.`,
+          variant: "destructive",
+        });
+      } else if (result.status === "completed") {
+        toast({
+          title: "Scan complete",
+          description: "No threats detected.",
+        });
+      }
+    }
   };
 
   return (
@@ -40,11 +137,11 @@ const Index = () => {
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
               Analyze suspicious files and URLs
-              <span className="block text-gradient mt-2">with 72+ security engines</span>
+              <span className="block text-gradient mt-2">with 70+ security engines</span>
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Free online service for scanning files and URLs for viruses, malware, and other threats.
-              Powered by the world's leading antivirus engines.
+              Free online service powered by VirusTotal API. Scan files and URLs for viruses, malware, and other threats
+              using the world's leading antivirus engines.
             </p>
           </div>
 
@@ -84,7 +181,9 @@ const Index = () => {
               <ScanResults 
                 target={scanTarget} 
                 type={scanType} 
-                isScanning={isScanning} 
+                isScanning={isScanning}
+                result={scanResult}
+                error={scanError}
               />
             </div>
           </section>
@@ -120,7 +219,7 @@ const Index = () => {
               </div>
               <h3 className="text-xl font-semibold text-foreground mb-2">Multi-Engine Scanning</h3>
               <p className="text-muted-foreground">
-                Leverage 72+ antivirus engines and URL/domain blacklisting services for comprehensive threat detection.
+                Leverage 70+ antivirus engines and URL/domain blacklisting services for comprehensive threat detection.
               </p>
             </div>
             <div className="p-6 rounded-xl border border-border bg-card hover:border-primary/30 transition-all duration-300">
@@ -154,7 +253,7 @@ const Index = () => {
               <span className="font-semibold">VirusGuard</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              © 2024 VirusGuard. Free online virus scanner.
+              © 2024 VirusGuard. Powered by VirusTotal API.
             </p>
             <div className="flex items-center gap-6 text-sm text-muted-foreground">
               <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
