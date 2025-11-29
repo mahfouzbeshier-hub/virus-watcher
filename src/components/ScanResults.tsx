@@ -1,87 +1,52 @@
-import { useState, useEffect } from "react";
-import { Shield, Clock, Hash, Globe, FileText } from "lucide-react";
+import { Shield, Clock, Hash, Globe, FileText, AlertCircle } from "lucide-react";
 import StatusBadge from "./StatusBadge";
 import { Progress } from "@/components/ui/progress";
-
-interface Engine {
-  name: string;
-  status: "clean" | "warning" | "danger" | "scanning";
-  category?: string;
-}
+import type { ScanResult, ScanEngine } from "@/lib/virusTotal";
 
 interface ScanResultsProps {
   target: string;
   type: "file" | "url";
   isScanning: boolean;
+  result?: ScanResult | null;
+  error?: string | null;
 }
 
-const mockEngines: Engine[] = [
-  { name: "Avira", status: "clean", category: "Antivirus" },
-  { name: "BitDefender", status: "clean", category: "Antivirus" },
-  { name: "ClamAV", status: "clean", category: "Antivirus" },
-  { name: "ESET-NOD32", status: "clean", category: "Antivirus" },
-  { name: "F-Secure", status: "clean", category: "Antivirus" },
-  { name: "Kaspersky", status: "clean", category: "Antivirus" },
-  { name: "Malwarebytes", status: "clean", category: "Antivirus" },
-  { name: "McAfee", status: "clean", category: "Antivirus" },
-  { name: "Microsoft", status: "clean", category: "Antivirus" },
-  { name: "Norton", status: "clean", category: "Antivirus" },
-  { name: "Sophos", status: "clean", category: "Antivirus" },
-  { name: "Trend Micro", status: "clean", category: "Antivirus" },
-  { name: "Google Safe", status: "clean", category: "Reputation" },
-  { name: "PhishTank", status: "clean", category: "Reputation" },
-  { name: "URLhaus", status: "clean", category: "Reputation" },
-  { name: "OpenPhish", status: "clean", category: "Reputation" },
-];
+const ScanResults = ({ target, type, isScanning, result, error }: ScanResultsProps) => {
+  const stats = result?.stats;
+  const engines = result?.engines || [];
+  const status = result?.status;
 
-const ScanResults = ({ target, type, isScanning }: ScanResultsProps) => {
-  const [engines, setEngines] = useState<Engine[]>([]);
-  const [progress, setProgress] = useState(0);
-  const [scanComplete, setScanComplete] = useState(false);
+  const cleanCount = stats?.undetected || 0;
+  const harmlessCount = stats?.harmless || 0;
+  const maliciousCount = stats?.malicious || 0;
+  const suspiciousCount = stats?.suspicious || 0;
+  const totalEngines = stats?.total || engines.length;
 
-  useEffect(() => {
-    if (isScanning) {
-      setEngines([]);
-      setProgress(0);
-      setScanComplete(false);
+  const overallStatus = maliciousCount > 0 ? "danger" : 
+                        suspiciousCount > 0 ? "warning" : 
+                        status === "completed" ? "clean" : "scanning";
 
-      // Simulate scanning
-      const interval = setInterval(() => {
-        setProgress((prev) => {
-          if (prev >= 100) {
-            clearInterval(interval);
-            setScanComplete(true);
-            return 100;
-          }
-          return prev + 2;
-        });
-      }, 50);
+  const progress = status === "completed" ? 100 : 
+                   status === "queued" ? 10 :
+                   status === "in-progress" ? 50 : 0;
 
-      // Add engines progressively
-      mockEngines.forEach((engine, index) => {
-        setTimeout(() => {
-          setEngines((prev) => [...prev, { ...engine, status: "scanning" }]);
-          setTimeout(() => {
-            setEngines((prev) =>
-              prev.map((e) =>
-                e.name === engine.name
-                  ? { ...e, status: Math.random() > 0.95 ? "warning" : "clean" }
-                  : e
-              )
-            );
-          }, 500 + Math.random() * 1000);
-        }, index * 150);
-      });
-
-      return () => clearInterval(interval);
-    }
-  }, [isScanning]);
-
-  const cleanCount = engines.filter((e) => e.status === "clean").length;
-  const warningCount = engines.filter((e) => e.status === "warning" || e.status === "danger").length;
-  const scanningCount = engines.filter((e) => e.status === "scanning").length;
-
-  const overallStatus = warningCount > 0 ? "warning" : scanningCount > 0 ? "scanning" : "clean";
+  if (error) {
+    return (
+      <div className="w-full animate-fade-in">
+        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6">
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-destructive/10">
+              <AlertCircle className="h-6 w-6 text-destructive" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-foreground">Scan Error</h3>
+              <p className="text-sm text-muted-foreground">{error}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full space-y-6 animate-fade-in">
@@ -91,11 +56,13 @@ const ScanResults = ({ target, type, isScanning }: ScanResultsProps) => {
           <div className="flex items-center gap-4">
             <div className={`flex h-16 w-16 items-center justify-center rounded-2xl ${
               overallStatus === "clean" ? "bg-success/10" : 
-              overallStatus === "warning" ? "bg-warning/10" : "bg-primary/10"
+              overallStatus === "warning" ? "bg-warning/10" : 
+              overallStatus === "danger" ? "bg-destructive/10" : "bg-primary/10"
             }`}>
               <Shield className={`h-8 w-8 ${
                 overallStatus === "clean" ? "text-success" : 
-                overallStatus === "warning" ? "text-warning" : "text-primary"
+                overallStatus === "warning" ? "text-warning" : 
+                overallStatus === "danger" ? "text-destructive" : "text-primary"
               }`} />
             </div>
             <div>
@@ -110,24 +77,32 @@ const ScanResults = ({ target, type, isScanning }: ScanResultsProps) => {
           </div>
           <div className="flex items-center gap-6 text-sm">
             <div className="text-center">
-              <p className="text-2xl font-bold text-success">{cleanCount}</p>
+              <p className="text-2xl font-bold text-success">{cleanCount + harmlessCount}</p>
               <p className="text-muted-foreground">Clean</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-warning">{warningCount}</p>
-              <p className="text-muted-foreground">Flagged</p>
+              <p className="text-2xl font-bold text-destructive">{maliciousCount}</p>
+              <p className="text-muted-foreground">Malicious</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-foreground">{engines.length}</p>
+              <p className="text-2xl font-bold text-warning">{suspiciousCount}</p>
+              <p className="text-muted-foreground">Suspicious</p>
+            </div>
+            <div className="text-center">
+              <p className="text-2xl font-bold text-foreground">{totalEngines}</p>
               <p className="text-muted-foreground">Engines</p>
             </div>
           </div>
         </div>
 
-        {!scanComplete && (
+        {status !== "completed" && (
           <div className="mt-6">
             <div className="flex items-center justify-between text-sm mb-2">
-              <span className="text-muted-foreground">Scanning progress</span>
+              <span className="text-muted-foreground">
+                {status === "queued" ? "Queued for analysis..." : 
+                 status === "in-progress" ? "Scanning in progress..." : 
+                 "Initializing scan..."}
+              </span>
               <span className="text-foreground font-medium">{Math.round(progress)}%</span>
             </div>
             <Progress value={progress} className="h-2" />
@@ -151,36 +126,45 @@ const ScanResults = ({ target, type, isScanning }: ScanResultsProps) => {
           <div className="flex items-center gap-3 text-sm">
             <Clock className="h-4 w-4 text-muted-foreground" />
             <span className="text-muted-foreground">Scan Time:</span>
-            <span className="text-foreground font-medium">{new Date().toLocaleTimeString()}</span>
+            <span className="text-foreground font-medium">
+              {result?.date ? new Date(result.date * 1000).toLocaleTimeString() : new Date().toLocaleTimeString()}
+            </span>
           </div>
           <div className="flex items-center gap-3 text-sm">
             <Hash className="h-4 w-4 text-muted-foreground" />
-            <span className="text-muted-foreground">SHA-256:</span>
-            <span className="text-foreground font-mono text-xs truncate max-w-[200px]">
-              a7f5397b...9e2d4c8b
-            </span>
+            <span className="text-muted-foreground">Status:</span>
+            <span className="text-foreground font-medium capitalize">{status || 'pending'}</span>
           </div>
         </div>
       </div>
 
       {/* Engines Grid */}
-      <div className="rounded-xl border border-border bg-card p-6">
-        <h4 className="text-lg font-semibold text-foreground mb-4">
-          Security Vendors ({engines.length}/{mockEngines.length})
-        </h4>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-          {engines.map((engine, index) => (
-            <div
-              key={engine.name}
-              className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 border border-border animate-scale-in"
-              style={{ animationDelay: `${index * 50}ms` }}
-            >
-              <span className="text-sm font-medium text-foreground">{engine.name}</span>
-              <StatusBadge status={engine.status} size="sm" showIcon={true} label="" />
-            </div>
-          ))}
+      {engines.length > 0 && (
+        <div className="rounded-xl border border-border bg-card p-6">
+          <h4 className="text-lg font-semibold text-foreground mb-4">
+            Security Vendors ({engines.length})
+          </h4>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            {engines.map((engine, index) => (
+              <div
+                key={engine.name}
+                className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 border border-border animate-scale-in"
+                style={{ animationDelay: `${index * 20}ms` }}
+              >
+                <span className="text-sm font-medium text-foreground truncate max-w-[120px]">
+                  {engine.name}
+                </span>
+                <StatusBadge 
+                  status={engine.status as "clean" | "warning" | "danger" | "scanning" | "unknown"} 
+                  size="sm" 
+                  showIcon={true} 
+                  label="" 
+                />
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
