@@ -226,9 +226,7 @@ const Index = () => {
               <Shield className="h-5 w-5 text-primary" />
               <span className="font-semibold">CyberScanX</span>
             </div>
-            <p className="text-sm text-muted-foreground">
-              © 2024 VirusGuard. Powered by VirusTotal API.
-            </p>
+            <p className="text-sm text-muted-foreground">© 2024 CyberScanX. Powered by VirusTotal API.</p>
             <div className="flex items-center gap-6 text-sm text-muted-foreground">
               <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
               <a href="#" className="hover:text-foreground transition-colors">Terms</a>
