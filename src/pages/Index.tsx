@@ -9,121 +9,110 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { File, Link, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { scanFile, scanUrl, pollAnalysisResults, type ScanResult } from "@/lib/virusTotal";
-
 const Index = () => {
   const [scanTarget, setScanTarget] = useState<string | null>(null);
   const [scanType, setScanType] = useState<"file" | "url">("file");
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
   const [scanError, setScanError] = useState<string | null>(null);
-  const { toast } = useToast();
-
+  const {
+    toast
+  } = useToast();
   const handleFileScan = async (file: File) => {
     setScanTarget(file.name);
     setScanType("file");
     setIsScanning(true);
     setScanResult(null);
     setScanError(null);
-
     toast({
       title: "Uploading file",
-      description: `Scanning ${file.name} with VirusTotal...`,
+      description: `Scanning ${file.name} with VirusTotal...`
     });
-
-    const { analysisId, error } = await scanFile(file);
-
+    const {
+      analysisId,
+      error
+    } = await scanFile(file);
     if (error) {
       setScanError(error);
       setIsScanning(false);
       toast({
         title: "Scan failed",
         description: error,
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
-
     if (analysisId) {
       toast({
         title: "File uploaded",
-        description: "Analysis in progress...",
+        description: "Analysis in progress..."
       });
-
-      const result = await pollAnalysisResults(analysisId, (update) => {
+      const result = await pollAnalysisResults(analysisId, update => {
         setScanResult(update);
       });
-
       setIsScanning(false);
-      
       if (result.stats.malicious > 0) {
         toast({
           title: "Threats detected!",
           description: `${result.stats.malicious} security vendors flagged this file as malicious.`,
-          variant: "destructive",
+          variant: "destructive"
         });
       } else if (result.status === "completed") {
         toast({
           title: "Scan complete",
-          description: "No threats detected.",
+          description: "No threats detected."
         });
       }
     }
   };
-
   const handleURLScan = async (url: string) => {
     setScanTarget(url);
     setScanType("url");
     setIsScanning(true);
     setScanResult(null);
     setScanError(null);
-
     toast({
       title: "Scanning URL",
-      description: `Analyzing ${url} with VirusTotal...`,
+      description: `Analyzing ${url} with VirusTotal...`
     });
-
-    const { analysisId, error } = await scanUrl(url);
-
+    const {
+      analysisId,
+      error
+    } = await scanUrl(url);
     if (error) {
       setScanError(error);
       setIsScanning(false);
       toast({
         title: "Scan failed",
         description: error,
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
-
     if (analysisId) {
       toast({
         title: "URL submitted",
-        description: "Analysis in progress...",
+        description: "Analysis in progress..."
       });
-
-      const result = await pollAnalysisResults(analysisId, (update) => {
+      const result = await pollAnalysisResults(analysisId, update => {
         setScanResult(update);
       });
-
       setIsScanning(false);
-
       if (result.stats.malicious > 0) {
         toast({
           title: "Threats detected!",
           description: `${result.stats.malicious} security vendors flagged this URL as malicious.`,
-          variant: "destructive",
+          variant: "destructive"
         });
       } else if (result.status === "completed") {
         toast({
           title: "Scan complete",
-          description: "No threats detected.",
+          description: "No threats detected."
         });
       }
     }
   };
-
-  return (
-    <div className="min-h-screen bg-background gradient-hero">
+  return <div className="min-h-screen bg-background gradient-hero">
       <Header />
 
       <main className="pt-24 pb-16">
@@ -135,31 +124,27 @@ const Index = () => {
                 <Shield className="h-7 w-7 text-primary" />
               </div>
             </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 lg:text-3xl">
               Analyze suspicious files and URLs
               <span className="block text-gradient mt-2">with 70+ security engines</span>
             </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-muted-foreground max-w-2xl mx-auto text-base">
               Free online service powered by VirusTotal API. Scan files and URLs for viruses, malware, and other threats
               using the world's leading antivirus engines.
             </p>
           </div>
 
           {/* Scan Interface */}
-          <div className="max-w-3xl mx-auto animate-slide-up" style={{ animationDelay: "200ms" }}>
+          <div className="max-w-3xl mx-auto animate-slide-up" style={{
+          animationDelay: "200ms"
+        }}>
             <Tabs defaultValue="file" className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-6 bg-secondary/50 p-1 rounded-xl">
-                <TabsTrigger 
-                  value="file" 
-                  className="flex items-center gap-2 data-[state=active]:bg-card data-[state=active]:text-foreground rounded-lg transition-all"
-                >
+                <TabsTrigger value="file" className="flex items-center gap-2 data-[state=active]:bg-card data-[state=active]:text-foreground rounded-lg transition-all">
                   <File className="h-4 w-4" />
                   File
                 </TabsTrigger>
-                <TabsTrigger 
-                  value="url"
-                  className="flex items-center gap-2 data-[state=active]:bg-card data-[state=active]:text-foreground rounded-lg transition-all"
-                >
+                <TabsTrigger value="url" className="flex items-center gap-2 data-[state=active]:bg-card data-[state=active]:text-foreground rounded-lg transition-all">
                   <Link className="h-4 w-4" />
                   URL
                 </TabsTrigger>
@@ -175,19 +160,11 @@ const Index = () => {
         </section>
 
         {/* Scan Results */}
-        {scanTarget && (
-          <section className="container mx-auto px-4 py-8">
+        {scanTarget && <section className="container mx-auto px-4 py-8">
             <div className="max-w-4xl mx-auto">
-              <ScanResults 
-                target={scanTarget} 
-                type={scanType} 
-                isScanning={isScanning}
-                result={scanResult}
-                error={scanError}
-              />
+              <ScanResults target={scanTarget} type={scanType} isScanning={isScanning} result={scanResult} error={scanError} />
             </div>
-          </section>
-        )}
+          </section>}
 
         {/* Stats Section */}
         <section className="container mx-auto px-4 py-16">
@@ -195,10 +172,7 @@ const Index = () => {
             <h2 className="text-3xl font-bold text-foreground mb-4">
               Trusted by millions worldwide
             </h2>
-            <p className="text-muted-foreground max-w-xl mx-auto">
-              Join the community of security researchers, IT professionals, and everyday users
-              who rely on VirusGuard for threat detection.
-            </p>
+            <p className="text-muted-foreground max-w-xl mx-auto">Join the community of security researchers, IT professionals, and everyday users who rely on CyberScanX for threat detection.</p>
           </div>
           <Stats />
         </section>
@@ -250,7 +224,7 @@ const Index = () => {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <Shield className="h-5 w-5 text-primary" />
-              <span className="font-semibold">VirusGuard</span>
+              <span className="font-semibold">CyberScanX</span>
             </div>
             <p className="text-sm text-muted-foreground">
               © 2024 VirusGuard. Powered by VirusTotal API.
@@ -263,8 +237,6 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
