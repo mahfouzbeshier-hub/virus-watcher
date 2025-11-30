@@ -14,7 +14,81 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          email: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      scans: {
+        Row: {
+          analysis_id: string | null
+          completed_at: string | null
+          created_at: string
+          error_message: string | null
+          id: string
+          scan_type: string
+          stats_harmless: number | null
+          stats_malicious: number | null
+          stats_suspicious: number | null
+          stats_undetected: number | null
+          status: string
+          target: string
+          user_id: string | null
+        }
+        Insert: {
+          analysis_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          scan_type: string
+          stats_harmless?: number | null
+          stats_malicious?: number | null
+          stats_suspicious?: number | null
+          stats_undetected?: number | null
+          status?: string
+          target: string
+          user_id?: string | null
+        }
+        Update: {
+          analysis_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          scan_type?: string
+          stats_harmless?: number | null
+          stats_malicious?: number | null
+          stats_suspicious?: number | null
+          stats_undetected?: number | null
+          status?: string
+          target?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
