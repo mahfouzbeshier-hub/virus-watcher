@@ -125,11 +125,11 @@ const Index = () => {
               </div>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 lg:text-3xl">
-              Analyze suspicious files and URLs
-              <span className="block text-gradient mt-2">with 70+ security engines</span>
+              <span className="text-gradient">CyberScanX</span> - Analyze Files & URLs
+              <span className="block text-foreground/80 mt-2">with 70+ security engines</span>
             </h1>
             <p className="text-muted-foreground max-w-2xl mx-auto text-base">
-              Free online service powered by VirusTotal API. Scan files and URLs for viruses, malware, and other threats
+              Free online virus scanner powered by VirusTotal API. Detect malware, phishing, and other threats
               using the world's leading antivirus engines.
             </p>
           </div>
@@ -226,7 +226,7 @@ const Index = () => {
               <Shield className="h-5 w-5 text-primary" />
               <span className="font-semibold">CyberScanX</span>
             </div>
-            <p className="text-sm text-muted-foreground">© 2024 CyberScanX. Powered by VirusTotal API.</p>
+            <p className="text-sm text-muted-foreground">© 2025 CyberScanX. Powered by VirusTotal API.</p>
             <div className="flex items-center gap-6 text-sm text-muted-foreground">
               <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
               <a href="#" className="hover:text-foreground transition-colors">Terms</a>
