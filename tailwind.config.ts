@@ -172,7 +172,7 @@ export default {
   					transform: 'scale(1)'
   				}
   			},
-  			'shimmer': {
+  			shimmer: {
   				'0%': {
   					backgroundPosition: '-200% 0'
   				},
@@ -197,7 +197,7 @@ export default {
   			'slide-up': 'slide-up 0.6s ease-out forwards',
   			'glow-pulse': 'glow-pulse 2s ease-in-out infinite',
   			'button-press': 'button-press 0.15s ease-in-out',
-  			'shimmer': 'shimmer 2s linear infinite',
+  			shimmer: 'shimmer 2s linear infinite',
   			'bounce-subtle': 'bounce-subtle 0.5s ease-in-out'
   		},
   		boxShadow: {
