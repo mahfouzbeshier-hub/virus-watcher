@@ -1,8 +1,10 @@
-# Welcome to your Lovable project
+# CyberScanX - Free Online Virus Scanner
+
+Analyze suspicious files and URLs with 72+ antivirus engines. Detect malware, phishing, and other threats instantly.
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/0ad961ce-e215-416c-804a-75d87a3cb274
+**URL**: https://CyberScanX.dev
 
 ## How can I edit this code?
 
@@ -59,6 +61,8 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
+- Supabase (backend)
+- VirusTotal API
 
 ## How can I deploy this project?
 
