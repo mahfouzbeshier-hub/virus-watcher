@@ -124,11 +124,11 @@ const Index = () => {
                 <Shield className="h-7 w-7 text-primary" />
               </div>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 lg:text-3xl">
-              <span className="text-gradient">CyberScanX</span> - Analyze Files & URLs
-              <span className="block text-foreground/80 mt-2">with 70+ security engines</span>
+            <h1 className="text-4xl md:text-5xl font-bold mb-6 lg:text-3xl text-popover">
+              <span className="text-gradient text-[#c0a7a7]">CyberScanX</span> - Analyze Files & URLs
+              <span className="block mt-2 text-destructive-foreground">with 70+ security engines</span>
             </h1>
-            <p className="text-muted-foreground max-w-2xl mx-auto text-base">
+            <p className="max-w-2xl mx-auto text-base text-muted">
               Free online virus scanner powered by VirusTotal API. Detect malware, phishing, and other threats
               using the world's leading antivirus engines.
             </p>
@@ -169,16 +169,16 @@ const Index = () => {
         {/* Stats Section */}
         <section className="container mx-auto px-4 py-16">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-foreground mb-4">
+            <h2 className="text-3xl font-bold mb-4 text-destructive-foreground">
               Trusted by millions worldwide
             </h2>
-            <p className="text-muted-foreground max-w-xl mx-auto">Join the community of security researchers, IT professionals, and everyday users who rely on CyberScanX for threat detection.</p>
+            <p className="max-w-xl mx-auto text-muted">Join the community of security researchers, IT professionals, and everyday users who rely on CyberScanX for threat detection.</p>
           </div>
           <Stats />
         </section>
 
         {/* Recent Scans */}
-        <section className="container mx-auto px-4 py-8">
+        <section className="container mx-auto px-4 py-8 text-destructive-foreground">
           <div className="max-w-4xl mx-auto">
             <RecentScans />
           </div>
@@ -187,7 +187,7 @@ const Index = () => {
         {/* Features Section */}
         <section className="container mx-auto px-4 py-16">
           <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            <div className="p-6 rounded-xl border border-border bg-card hover:border-primary/30 transition-all duration-300">
+            <div className="p-6 rounded-xl border border-border hover:border-primary/30 transition-all duration-300 bg-secondary">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 mb-4">
                 <Shield className="h-6 w-6 text-primary" />
               </div>
@@ -196,7 +196,7 @@ const Index = () => {
                 Leverage 70+ antivirus engines and URL/domain blacklisting services for comprehensive threat detection.
               </p>
             </div>
-            <div className="p-6 rounded-xl border border-border bg-card hover:border-primary/30 transition-all duration-300">
+            <div className="p-6 rounded-xl border border-border hover:border-primary/30 transition-all duration-300 bg-secondary">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-success/10 mb-4">
                 <File className="h-6 w-6 text-success" />
               </div>
@@ -205,7 +205,7 @@ const Index = () => {
                 Deep analysis of executables, documents, archives, and more with behavioral detection capabilities.
               </p>
             </div>
-            <div className="p-6 rounded-xl border border-border bg-card hover:border-primary/30 transition-all duration-300">
+            <div className="p-6 rounded-xl border border-border hover:border-primary/30 transition-all duration-300 bg-secondary">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-warning/10 mb-4">
                 <Link className="h-6 w-6 text-warning" />
               </div>
@@ -222,12 +222,12 @@ const Index = () => {
       <footer className="border-t border-border py-8">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 text-secondary-foreground">
               <Shield className="h-5 w-5 text-primary" />
-              <span className="font-semibold">CyberScanX</span>
+              <span className="font-semibold bg-secondary text-primary">CyberScanX</span>
             </div>
-            <p className="text-sm text-muted-foreground">© 2025 CyberScanX. Powered by VirusTotal API.</p>
-            <div className="flex items-center gap-6 text-sm text-muted-foreground">
+            <p className="text-sm text-destructive-foreground">© 2025 CyberScanX. Powered by VirusTotal API.</p>
+            <div className="flex items-center gap-6 text-sm text-destructive-foreground">
               <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
               <a href="#" className="hover:text-foreground transition-colors">Terms</a>
               <a href="#" className="hover:text-foreground transition-colors">API</a>
