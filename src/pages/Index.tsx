@@ -224,7 +224,7 @@ const Index = () => {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-secondary-foreground">
               <Shield className="h-5 w-5 text-primary" />
-              <span className="font-semibold bg-secondary text-primary">CyberScanX</span>
+              <span className="font-semibold text-primary bg-foreground">CyberScanX</span>
             </div>
             <p className="text-sm text-destructive-foreground">© 2025 CyberScanX. Powered by VirusTotal API.</p>
             <div className="flex items-center gap-6 text-sm text-destructive-foreground">
