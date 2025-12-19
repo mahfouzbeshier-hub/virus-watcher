@@ -1,4 +1,4 @@
-import { Shield, Clock, Hash, Globe, FileText, AlertCircle } from "lucide-react";
+import { Shield, Clock, Hash, Globe, FileText, AlertCircle, CheckCircle, AlertTriangle, Info } from "lucide-react";
 import StatusBadge from "./StatusBadge";
 import { Progress } from "@/components/ui/progress";
 import type { ScanResult, ScanEngine } from "@/lib/virusTotal";
@@ -11,49 +11,74 @@ interface ScanResultsProps {
   error?: string | null;
 }
 
-// Demo engine data for visualization
+// Extended demo engine data with varied threat types
 const demoEngines: ScanEngine[] = [
+  // Malicious/Phishing detections (shown first)
+  { name: "BitDefender", category: "malicious", result: "Phishing", status: "danger" },
+  { name: "CRDF", category: "malicious", result: "Malicious", status: "danger" },
+  { name: "CyRadar", category: "malicious", result: "Phishing", status: "danger" },
+  { name: "Fortinet", category: "malicious", result: "Phishing", status: "danger" },
+  { name: "G-Data", category: "malicious", result: "Phishing", status: "danger" },
+  { name: "Lionic", category: "malicious", result: "Phishing", status: "danger" },
+  { name: "Seclookup", category: "malicious", result: "Malicious", status: "danger" },
+  { name: "Sophos", category: "malicious", result: "Phishing", status: "danger" },
+  { name: "VIPRE", category: "malicious", result: "Phishing", status: "danger" },
+  { name: "Webroot", category: "malicious", result: "Malicious", status: "danger" },
+  // Suspicious detections
+  { name: "alphaMountain.ai", category: "suspicious", result: "Suspicious", status: "warning" },
+  { name: "ESET", category: "suspicious", result: "Suspicious", status: "warning" },
+  { name: "Forcepoint ThreatSeeker", category: "suspicious", result: "Suspicious", status: "warning" },
+  { name: "Gridinsoft", category: "suspicious", result: "Suspicious", status: "warning" },
+  // Clean detections
+  { name: "Abusix", category: "harmless", result: null, status: "clean" },
+  { name: "Acronis", category: "harmless", result: null, status: "clean" },
+  { name: "ADMINUSLabs", category: "harmless", result: null, status: "clean" },
+  { name: "AILabs (MONITORAPP)", category: "harmless", result: null, status: "clean" },
+  { name: "AlienVault", category: "harmless", result: null, status: "clean" },
+  { name: "Antiy-AVL", category: "harmless", result: null, status: "clean" },
+  { name: "Artists Against 419", category: "harmless", result: null, status: "clean" },
+  { name: "benkow.cc", category: "harmless", result: null, status: "clean" },
+  { name: "BlockList", category: "harmless", result: null, status: "clean" },
+  { name: "Blueliv", category: "harmless", result: null, status: "clean" },
+  { name: "Certego", category: "harmless", result: null, status: "clean" },
+  { name: "Chong Lua Dao", category: "harmless", result: null, status: "clean" },
+  { name: "CINS Army", category: "harmless", result: null, status: "clean" },
+  { name: "CMC Threat Intelligence", category: "harmless", result: null, status: "clean" },
+  { name: "Criminal IP", category: "harmless", result: null, status: "clean" },
+  { name: "Cyble", category: "harmless", result: null, status: "clean" },
   { name: "Avast", category: "harmless", result: null, status: "clean" },
   { name: "AVG", category: "harmless", result: null, status: "clean" },
   { name: "Avira", category: "harmless", result: null, status: "clean" },
-  { name: "BitDefender", category: "harmless", result: null, status: "clean" },
   { name: "ClamAV", category: "harmless", result: null, status: "clean" },
   { name: "Comodo", category: "harmless", result: null, status: "clean" },
   { name: "CrowdStrike", category: "harmless", result: null, status: "clean" },
   { name: "Cylance", category: "harmless", result: null, status: "clean" },
   { name: "DrWeb", category: "harmless", result: null, status: "clean" },
-  { name: "ESET", category: "harmless", result: null, status: "clean" },
   { name: "Emsisoft", category: "harmless", result: null, status: "clean" },
   { name: "F-Secure", category: "harmless", result: null, status: "clean" },
   { name: "FireEye", category: "harmless", result: null, status: "clean" },
-  { name: "Fortinet", category: "harmless", result: null, status: "clean" },
-  { name: "G Data", category: "harmless", result: null, status: "clean" },
   { name: "Google", category: "harmless", result: null, status: "clean" },
   { name: "Ikarus", category: "harmless", result: null, status: "clean" },
   { name: "K7", category: "harmless", result: null, status: "clean" },
-  { name: "Kaspersky", category: "malicious", result: "Trojan.Generic", status: "danger" },
-  { name: "Lionic", category: "harmless", result: null, status: "clean" },
+  { name: "Kaspersky", category: "harmless", result: null, status: "clean" },
   { name: "Malwarebytes", category: "harmless", result: null, status: "clean" },
   { name: "MaxSecure", category: "harmless", result: null, status: "clean" },
   { name: "McAfee", category: "harmless", result: null, status: "clean" },
   { name: "Microsoft", category: "harmless", result: null, status: "clean" },
   { name: "NANO", category: "harmless", result: null, status: "clean" },
   { name: "Norton", category: "harmless", result: null, status: "clean" },
-  { name: "Panda", category: "suspicious", result: "Suspicious.Gen", status: "warning" },
+  { name: "Panda", category: "harmless", result: null, status: "clean" },
   { name: "Qihoo 360", category: "harmless", result: null, status: "clean" },
   { name: "Rising", category: "harmless", result: null, status: "clean" },
   { name: "SUPERAntiSpyware", category: "harmless", result: null, status: "clean" },
   { name: "Sangfor", category: "harmless", result: null, status: "clean" },
-  { name: "Sophos", category: "harmless", result: null, status: "clean" },
   { name: "Symantec", category: "harmless", result: null, status: "clean" },
   { name: "TACHYON", category: "harmless", result: null, status: "clean" },
   { name: "Tencent", category: "harmless", result: null, status: "clean" },
   { name: "TrendMicro", category: "harmless", result: null, status: "clean" },
   { name: "Trustlook", category: "harmless", result: null, status: "clean" },
   { name: "VBA32", category: "harmless", result: null, status: "clean" },
-  { name: "VIPRE", category: "harmless", result: null, status: "clean" },
   { name: "ViRobot", category: "harmless", result: null, status: "clean" },
-  { name: "Webroot", category: "harmless", result: null, status: "clean" },
   { name: "Yandex", category: "harmless", result: null, status: "clean" },
   { name: "Zillya", category: "harmless", result: null, status: "clean" },
   { name: "ZoneAlarm", category: "harmless", result: null, status: "clean" },
@@ -70,7 +95,6 @@ const demoEngines: ScanEngine[] = [
   { name: "Cyren", category: "harmless", result: null, status: "clean" },
   { name: "DeepInstinct", category: "harmless", result: null, status: "clean" },
   { name: "Elastic", category: "harmless", result: null, status: "clean" },
-  { name: "Gridinsoft", category: "harmless", result: null, status: "clean" },
   { name: "Jiangmin", category: "harmless", result: null, status: "clean" },
   { name: "K7GW", category: "harmless", result: null, status: "clean" },
   { name: "Kingsoft", category: "harmless", result: null, status: "clean" },
@@ -82,34 +106,6 @@ const demoEngines: ScanEngine[] = [
   { name: "Snort", category: "harmless", result: null, status: "clean" },
   { name: "SpamAssassin", category: "harmless", result: null, status: "clean" },
   { name: "Sucuri", category: "harmless", result: null, status: "clean" },
-  { name: "Tehtris", category: "harmless", result: null, status: "clean" },
-  { name: "URLhaus", category: "harmless", result: null, status: "clean" },
-  { name: "URLQuery", category: "harmless", result: null, status: "clean" },
-  { name: "Varist", category: "harmless", result: null, status: "clean" },
-  { name: "Xcitium", category: "harmless", result: null, status: "clean" },
-  { name: "Zenex", category: "harmless", result: null, status: "clean" },
-  { name: "alphaMountain", category: "harmless", result: null, status: "clean" },
-  { name: "securolytics", category: "harmless", result: null, status: "clean" },
-  { name: "0xSI", category: "harmless", result: null, status: "clean" },
-  { name: "ADMINUSLabs", category: "harmless", result: null, status: "clean" },
-  { name: "AILabs", category: "harmless", result: null, status: "clean" },
-  { name: "AlienVault", category: "harmless", result: null, status: "clean" },
-  { name: "Antivirus Pro", category: "harmless", result: null, status: "clean" },
-  { name: "AutoShun", category: "harmless", result: null, status: "clean" },
-  { name: "BlockList", category: "harmless", result: null, status: "clean" },
-  { name: "CRDF", category: "harmless", result: null, status: "clean" },
-  { name: "Certego", category: "harmless", result: null, status: "clean" },
-  { name: "Criminal IP", category: "harmless", result: null, status: "clean" },
-  { name: "DNS8", category: "harmless", result: null, status: "clean" },
-  { name: "Dr.Web Link", category: "harmless", result: null, status: "clean" },
-  { name: "ESET-NOD32", category: "harmless", result: null, status: "clean" },
-  { name: "ESTsecurity", category: "harmless", result: null, status: "clean" },
-  { name: "GreenSnow", category: "harmless", result: null, status: "clean" },
-  { name: "Heimdal", category: "harmless", result: null, status: "clean" },
-  { name: "IPsum", category: "harmless", result: null, status: "clean" },
-  { name: "Juniper", category: "harmless", result: null, status: "clean" },
-  { name: "Lumu", category: "harmless", result: null, status: "clean" },
-  { name: "SafeToOpen", category: "harmless", result: null, status: "clean" },
 ];
 
 const ScanResults = ({ target, type, isScanning, result, error }: ScanResultsProps) => {
@@ -117,10 +113,10 @@ const ScanResults = ({ target, type, isScanning, result, error }: ScanResultsPro
   const engines = result?.engines && result.engines.length > 0 ? result.engines : demoEngines;
   const status = result?.status || "completed";
 
-  const cleanCount = stats?.undetected || 93;
+  const cleanCount = stats?.undetected || 84;
   const harmlessCount = stats?.harmless || 0;
-  const maliciousCount = stats?.malicious || 1;
-  const suspiciousCount = stats?.suspicious || 1;
+  const maliciousCount = stats?.malicious || 10;
+  const suspiciousCount = stats?.suspicious || 4;
   const totalEngines = stats?.total || engines.length;
 
   const overallStatus = maliciousCount > 0 ? "danger" : 
@@ -241,11 +237,13 @@ const ScanResults = ({ target, type, isScanning, result, error }: ScanResultsPro
 
       {/* Engines Table */}
       {engines.length > 0 && (
-        <div className="rounded-xl border border-border bg-card p-6">
-          <h4 className="text-lg font-semibold text-foreground mb-4">
-            Security Vendors Analysis ({engines.length})
-          </h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+        <div className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="p-4 border-b border-border bg-secondary/30">
+            <h4 className="text-lg font-semibold text-foreground">
+              Security Vendors Analysis ({engines.length})
+            </h4>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 divide-border">
             {/* Sort engines: threats first, then clean */}
             {[...engines]
               .sort((a, b) => {
@@ -255,8 +253,9 @@ const ScanResults = ({ target, type, isScanning, result, error }: ScanResultsPro
               .map((engine, index) => (
                 <div
                   key={engine.name}
-                  className="flex items-center justify-between py-3 border-b border-border/50 last:border-b-0"
-                  style={{ animationDelay: `${index * 10}ms` }}
+                  className={`flex items-center justify-between px-4 py-3 border-b border-border/30 ${
+                    index % 2 === 0 ? 'md:border-r md:border-r-border/30' : ''
+                  } hover:bg-secondary/20 transition-colors`}
                 >
                   <span className="text-sm font-medium text-foreground">
                     {engine.name}
@@ -264,19 +263,13 @@ const ScanResults = ({ target, type, isScanning, result, error }: ScanResultsPro
                   <div className="flex items-center gap-2">
                     {engine.status === "clean" && (
                       <>
-                        <div className="w-4 h-4 rounded-full border-2 border-success flex items-center justify-center">
-                          <svg className="w-2.5 h-2.5 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
+                        <CheckCircle className="w-4 h-4 text-success" />
                         <span className="text-sm text-success font-medium">Clean</span>
                       </>
                     )}
                     {engine.status === "danger" && (
                       <>
-                        <div className="w-4 h-4 rounded-full border-2 border-destructive flex items-center justify-center">
-                          <span className="text-destructive text-xs font-bold">!</span>
-                        </div>
+                        <AlertTriangle className="w-4 h-4 text-destructive" />
                         <span className="text-sm text-destructive font-medium">
                           {engine.result || "Malicious"}
                         </span>
@@ -284,9 +277,7 @@ const ScanResults = ({ target, type, isScanning, result, error }: ScanResultsPro
                     )}
                     {engine.status === "warning" && (
                       <>
-                        <div className="w-4 h-4 rounded-full border-2 border-warning flex items-center justify-center">
-                          <span className="text-warning text-xs font-bold">i</span>
-                        </div>
+                        <Info className="w-4 h-4 text-warning" />
                         <span className="text-sm text-warning font-medium">
                           {engine.result || "Suspicious"}
                         </span>
@@ -294,9 +285,7 @@ const ScanResults = ({ target, type, isScanning, result, error }: ScanResultsPro
                     )}
                     {(engine.status === "unknown" || engine.status === "scanning") && (
                       <>
-                        <div className="w-4 h-4 rounded-full border-2 border-muted-foreground flex items-center justify-center">
-                          <span className="text-muted-foreground text-xs">?</span>
-                        </div>
+                        <Info className="w-4 h-4 text-muted-foreground" />
                         <span className="text-sm text-muted-foreground font-medium">Unknown</span>
                       </>
                     )}
