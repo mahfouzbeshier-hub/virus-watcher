@@ -239,30 +239,70 @@ const ScanResults = ({ target, type, isScanning, result, error }: ScanResultsPro
         </div>
       </div>
 
-      {/* Engines Grid */}
+      {/* Engines Table */}
       {engines.length > 0 && (
         <div className="rounded-xl border border-border bg-card p-6">
           <h4 className="text-lg font-semibold text-foreground mb-4">
-            Security Vendors ({engines.length})
+            Security Vendors Analysis ({engines.length})
           </h4>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-            {engines.map((engine, index) => (
-              <div
-                key={engine.name}
-                className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 border border-border animate-scale-in"
-                style={{ animationDelay: `${index * 20}ms` }}
-              >
-                <span className="text-sm font-medium text-foreground truncate max-w-[120px]">
-                  {engine.name}
-                </span>
-                <StatusBadge 
-                  status={engine.status as "clean" | "warning" | "danger" | "scanning" | "unknown"} 
-                  size="sm" 
-                  showIcon={true} 
-                  label="" 
-                />
-              </div>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+            {/* Sort engines: threats first, then clean */}
+            {[...engines]
+              .sort((a, b) => {
+                const priority = { danger: 0, warning: 1, unknown: 2, scanning: 3, clean: 4 };
+                return (priority[a.status] || 4) - (priority[b.status] || 4);
+              })
+              .map((engine, index) => (
+                <div
+                  key={engine.name}
+                  className="flex items-center justify-between py-3 border-b border-border/50 last:border-b-0"
+                  style={{ animationDelay: `${index * 10}ms` }}
+                >
+                  <span className="text-sm font-medium text-foreground">
+                    {engine.name}
+                  </span>
+                  <div className="flex items-center gap-2">
+                    {engine.status === "clean" && (
+                      <>
+                        <div className="w-4 h-4 rounded-full border-2 border-success flex items-center justify-center">
+                          <svg className="w-2.5 h-2.5 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                        <span className="text-sm text-success font-medium">Clean</span>
+                      </>
+                    )}
+                    {engine.status === "danger" && (
+                      <>
+                        <div className="w-4 h-4 rounded-full border-2 border-destructive flex items-center justify-center">
+                          <span className="text-destructive text-xs font-bold">!</span>
+                        </div>
+                        <span className="text-sm text-destructive font-medium">
+                          {engine.result || "Malicious"}
+                        </span>
+                      </>
+                    )}
+                    {engine.status === "warning" && (
+                      <>
+                        <div className="w-4 h-4 rounded-full border-2 border-warning flex items-center justify-center">
+                          <span className="text-warning text-xs font-bold">i</span>
+                        </div>
+                        <span className="text-sm text-warning font-medium">
+                          {engine.result || "Suspicious"}
+                        </span>
+                      </>
+                    )}
+                    {(engine.status === "unknown" || engine.status === "scanning") && (
+                      <>
+                        <div className="w-4 h-4 rounded-full border-2 border-muted-foreground flex items-center justify-center">
+                          <span className="text-muted-foreground text-xs">?</span>
+                        </div>
+                        <span className="text-sm text-muted-foreground font-medium">Unknown</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              ))}
           </div>
         </div>
       )}
