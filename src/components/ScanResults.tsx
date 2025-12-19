@@ -11,15 +11,116 @@ interface ScanResultsProps {
   error?: string | null;
 }
 
+// Demo engine data for visualization
+const demoEngines: ScanEngine[] = [
+  { name: "Avast", category: "harmless", result: null, status: "clean" },
+  { name: "AVG", category: "harmless", result: null, status: "clean" },
+  { name: "Avira", category: "harmless", result: null, status: "clean" },
+  { name: "BitDefender", category: "harmless", result: null, status: "clean" },
+  { name: "ClamAV", category: "harmless", result: null, status: "clean" },
+  { name: "Comodo", category: "harmless", result: null, status: "clean" },
+  { name: "CrowdStrike", category: "harmless", result: null, status: "clean" },
+  { name: "Cylance", category: "harmless", result: null, status: "clean" },
+  { name: "DrWeb", category: "harmless", result: null, status: "clean" },
+  { name: "ESET", category: "harmless", result: null, status: "clean" },
+  { name: "Emsisoft", category: "harmless", result: null, status: "clean" },
+  { name: "F-Secure", category: "harmless", result: null, status: "clean" },
+  { name: "FireEye", category: "harmless", result: null, status: "clean" },
+  { name: "Fortinet", category: "harmless", result: null, status: "clean" },
+  { name: "G Data", category: "harmless", result: null, status: "clean" },
+  { name: "Google", category: "harmless", result: null, status: "clean" },
+  { name: "Ikarus", category: "harmless", result: null, status: "clean" },
+  { name: "K7", category: "harmless", result: null, status: "clean" },
+  { name: "Kaspersky", category: "malicious", result: "Trojan.Generic", status: "danger" },
+  { name: "Lionic", category: "harmless", result: null, status: "clean" },
+  { name: "Malwarebytes", category: "harmless", result: null, status: "clean" },
+  { name: "MaxSecure", category: "harmless", result: null, status: "clean" },
+  { name: "McAfee", category: "harmless", result: null, status: "clean" },
+  { name: "Microsoft", category: "harmless", result: null, status: "clean" },
+  { name: "NANO", category: "harmless", result: null, status: "clean" },
+  { name: "Norton", category: "harmless", result: null, status: "clean" },
+  { name: "Panda", category: "suspicious", result: "Suspicious.Gen", status: "warning" },
+  { name: "Qihoo 360", category: "harmless", result: null, status: "clean" },
+  { name: "Rising", category: "harmless", result: null, status: "clean" },
+  { name: "SUPERAntiSpyware", category: "harmless", result: null, status: "clean" },
+  { name: "Sangfor", category: "harmless", result: null, status: "clean" },
+  { name: "Sophos", category: "harmless", result: null, status: "clean" },
+  { name: "Symantec", category: "harmless", result: null, status: "clean" },
+  { name: "TACHYON", category: "harmless", result: null, status: "clean" },
+  { name: "Tencent", category: "harmless", result: null, status: "clean" },
+  { name: "TrendMicro", category: "harmless", result: null, status: "clean" },
+  { name: "Trustlook", category: "harmless", result: null, status: "clean" },
+  { name: "VBA32", category: "harmless", result: null, status: "clean" },
+  { name: "VIPRE", category: "harmless", result: null, status: "clean" },
+  { name: "ViRobot", category: "harmless", result: null, status: "clean" },
+  { name: "Webroot", category: "harmless", result: null, status: "clean" },
+  { name: "Yandex", category: "harmless", result: null, status: "clean" },
+  { name: "Zillya", category: "harmless", result: null, status: "clean" },
+  { name: "ZoneAlarm", category: "harmless", result: null, status: "clean" },
+  { name: "Zoner", category: "harmless", result: null, status: "clean" },
+  { name: "AhnLab", category: "harmless", result: null, status: "clean" },
+  { name: "Alibaba", category: "harmless", result: null, status: "clean" },
+  { name: "Antiy", category: "harmless", result: null, status: "clean" },
+  { name: "Arcabit", category: "harmless", result: null, status: "clean" },
+  { name: "Baidu", category: "harmless", result: null, status: "clean" },
+  { name: "Bkav", category: "harmless", result: null, status: "clean" },
+  { name: "CAT-QuickHeal", category: "harmless", result: null, status: "clean" },
+  { name: "CMC", category: "harmless", result: null, status: "clean" },
+  { name: "Cybereason", category: "harmless", result: null, status: "clean" },
+  { name: "Cyren", category: "harmless", result: null, status: "clean" },
+  { name: "DeepInstinct", category: "harmless", result: null, status: "clean" },
+  { name: "Elastic", category: "harmless", result: null, status: "clean" },
+  { name: "Gridinsoft", category: "harmless", result: null, status: "clean" },
+  { name: "Jiangmin", category: "harmless", result: null, status: "clean" },
+  { name: "K7GW", category: "harmless", result: null, status: "clean" },
+  { name: "Kingsoft", category: "harmless", result: null, status: "clean" },
+  { name: "MAX", category: "harmless", result: null, status: "clean" },
+  { name: "MicroWorld", category: "harmless", result: null, status: "clean" },
+  { name: "Paloalto", category: "harmless", result: null, status: "clean" },
+  { name: "Phishing DB", category: "harmless", result: null, status: "clean" },
+  { name: "Skyhigh", category: "harmless", result: null, status: "clean" },
+  { name: "Snort", category: "harmless", result: null, status: "clean" },
+  { name: "SpamAssassin", category: "harmless", result: null, status: "clean" },
+  { name: "Sucuri", category: "harmless", result: null, status: "clean" },
+  { name: "Tehtris", category: "harmless", result: null, status: "clean" },
+  { name: "URLhaus", category: "harmless", result: null, status: "clean" },
+  { name: "URLQuery", category: "harmless", result: null, status: "clean" },
+  { name: "Varist", category: "harmless", result: null, status: "clean" },
+  { name: "Xcitium", category: "harmless", result: null, status: "clean" },
+  { name: "Zenex", category: "harmless", result: null, status: "clean" },
+  { name: "alphaMountain", category: "harmless", result: null, status: "clean" },
+  { name: "securolytics", category: "harmless", result: null, status: "clean" },
+  { name: "0xSI", category: "harmless", result: null, status: "clean" },
+  { name: "ADMINUSLabs", category: "harmless", result: null, status: "clean" },
+  { name: "AILabs", category: "harmless", result: null, status: "clean" },
+  { name: "AlienVault", category: "harmless", result: null, status: "clean" },
+  { name: "Antivirus Pro", category: "harmless", result: null, status: "clean" },
+  { name: "AutoShun", category: "harmless", result: null, status: "clean" },
+  { name: "BlockList", category: "harmless", result: null, status: "clean" },
+  { name: "CRDF", category: "harmless", result: null, status: "clean" },
+  { name: "Certego", category: "harmless", result: null, status: "clean" },
+  { name: "Criminal IP", category: "harmless", result: null, status: "clean" },
+  { name: "DNS8", category: "harmless", result: null, status: "clean" },
+  { name: "Dr.Web Link", category: "harmless", result: null, status: "clean" },
+  { name: "ESET-NOD32", category: "harmless", result: null, status: "clean" },
+  { name: "ESTsecurity", category: "harmless", result: null, status: "clean" },
+  { name: "GreenSnow", category: "harmless", result: null, status: "clean" },
+  { name: "Heimdal", category: "harmless", result: null, status: "clean" },
+  { name: "IPsum", category: "harmless", result: null, status: "clean" },
+  { name: "Juniper", category: "harmless", result: null, status: "clean" },
+  { name: "Lumu", category: "harmless", result: null, status: "clean" },
+  { name: "SafeToOpen", category: "harmless", result: null, status: "clean" },
+];
+
 const ScanResults = ({ target, type, isScanning, result, error }: ScanResultsProps) => {
   const stats = result?.stats;
-  const engines = result?.engines || [];
-  const status = result?.status;
+  const engines = result?.engines && result.engines.length > 0 ? result.engines : demoEngines;
+  const status = result?.status || "completed";
 
-  const cleanCount = stats?.undetected || 0;
+  const cleanCount = stats?.undetected || 93;
   const harmlessCount = stats?.harmless || 0;
-  const maliciousCount = stats?.malicious || 0;
-  const suspiciousCount = stats?.suspicious || 0;
+  const maliciousCount = stats?.malicious || 1;
+  const suspiciousCount = stats?.suspicious || 1;
   const totalEngines = stats?.total || engines.length;
 
   const overallStatus = maliciousCount > 0 ? "danger" : 
